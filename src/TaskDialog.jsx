@@ -10,7 +10,7 @@ function TaskDialog(props) {
   const [description, setDescription] = useState("");
   const [date, setDate] = useState(null);
   const [priority, setPriority] = useState("Medium");
-
+  const [nameError, setNameError] = useState("");
   useEffect(function () {
     if (props.editTask) {
       setName(props.editTask.name);
@@ -21,68 +21,55 @@ function TaskDialog(props) {
       } else {
         setDate(null);
       }
-    }
-    else {
+    } else {
       setName("");
       setDescription("");
       setDate(null);
       setPriority("Medium");
     }
-  }, [props.editTask, props.open]);
-
+    setNameError("");
+    }, [props.editTask, props.open]);
   function saveTask() {
     if (name.trim() === "") {
-      alert("Please enter Task Name");
+      setNameError("Task Name is required");
       return;
     }
-    let task = {  name: name,  description: description,  date: date ? date.format("DD/MM/YYYY") : "",  priority: priority,};
-
+    let task = { name: name, description: description, date: date ? date.format("DD/MM/YYYY") : "", priority: priority, };
     if (props.editTask) {
       props.updateTask(task);
-    }
-    else {
+    } else {
       props.addTask(task);
     }
     props.handleClose();
   }
   return (
-    <Dialog  open={props.open}  onClose={props.handleClose}  fullWidth>
-      <DialogTitle>  {props.editTask ? "Edit Task" : "Add New Task"}</DialogTitle>
+    <Dialog open={props.open} onClose={props.handleClose} fullWidth >
+      <DialogTitle> {props.editTask ? "Edit Task" : "Add New Task"} </DialogTitle>
       <DialogContent>
-        <TextField fullWidth margin="normal" label="Task Name" value={name}
+        <TextField fullWidth margin="normal" label="Task Name" value={name} error={nameError !== ""} helperText={nameError}
             onChange={function (event) {
             setName(event.target.value);
-          }}
-         />
-        <TextField fullWidth margin="normal" multiline rows={3} label="Description" value={description}
-            onChange={function (event) {
-            setDescription(event.target.value);
-            }}
-        />
-
+            if (event.target.value.trim() !== "") {
+              setNameError("");
+            }
+          }} />
+        <TextField fullWidth margin="normal" multiline rows={3} label="Description" value={description} onChange={function (event) { setDescription(event.target.value); }} />
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker label="Select Date" value={date}
-             onChange={function (newDate) {
+          <DatePicker label="Select Date" format="DD/MM/YYYY" value={date}
+            onChange={function (newDate) {
               setDate(newDate);
             }}
-            sx={{ width: "100%", mt: 2 }}
-          />
-
+            sx={{ width: "100%", mt: 2, }} />
         </LocalizationProvider>
-
-        <TextField select fullWidth margin="normal" label="Priority" value={priority}
-          onChange={function (event) {
-            setPriority(event.target.value);
-          }}
-        >
+        <TextField select fullWidth margin="normal" label="Priority" value={priority} onChange={function (event) { setPriority(event.target.value); }} >
           <MenuItem value="High">High</MenuItem>
           <MenuItem value="Medium">Medium</MenuItem>
           <MenuItem value="Low">Low</MenuItem>
         </TextField>
       </DialogContent>
       <DialogActions>
-        <Button onClick={props.handleClose}>  Cancel</Button>
-        <Button variant="contained" onClick={saveTask}> {props.editTask ? "Update" : "Save"}</Button>
+        <Button onClick={props.handleClose}> Cancel </Button>
+        <Button variant="contained" onClick={saveTask} > {props.editTask ? "Update" : "Save"}      </Button>
       </DialogActions>
     </Dialog>
   );

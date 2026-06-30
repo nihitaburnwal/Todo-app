@@ -1,4 +1,5 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, IconButton,} from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, IconButton, Card, CardContent, Stack,} from "@mui/material";
+
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
@@ -7,11 +8,43 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 function TaskTable(props) {
   if (props.tasks.length === 0) {
     return (
-      <Typography align="center" sx={{ mt: 3 }}>
-        No tasks added yet.
-      </Typography>
+      <Typography align="center" sx={{ mt: 3 }}>     No tasks added yet. </Typography>
     );
   }
+  if (props.isMobile) {
+    
+    return (
+      <Stack spacing={2} sx={{ mt: 3 }}>
+        {props.tasks.map(function (task, index) {
+          return (
+            <Card key={index}>
+              <CardContent>
+                <Typography variant="h6">   {task.name}  </Typography>
+                <Typography sx={{ mt: 1 }}>  <b>Description:</b> {task.description} </Typography>
+                <Typography sx={{ mt: 1 }}> <b>Date:</b> {task.date}</Typography>
+                <Typography sx={{ mt: 1 }}> <b>Priority:</b> {task.priority} </Typography>
+                <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
+                  <IconButton color="primary" onClick={function () { props.openEdit(index); }} >
+                  <EditIcon />
+                  </IconButton>
+                  <IconButton color="error" onClick={function () { props.deleteTask(index); }} >
+                    <DeleteIcon />
+                  </IconButton>
+                  <IconButton color="success" disabled={index === 0}  onClick={function () { props.moveUp(index); }} >
+                    <ArrowUpwardIcon />
+                  </IconButton>
+                  <IconButton color="secondary" disabled={index === props.tasks.length - 1} onClick={function () { props.moveDown(index); }} >
+                    <ArrowDownwardIcon />
+                  </IconButton>
+                </Stack>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </Stack>
+    );
+  }
+
   return (
     <TableContainer component={Paper} sx={{ mt: 3 }}>
       <Table>
@@ -33,16 +66,16 @@ function TaskTable(props) {
                 <TableCell>{task.date}</TableCell>
                 <TableCell>{task.priority}</TableCell>
                 <TableCell>
-                  <IconButton color="primary" onClick={function () { props.openEdit(index);}}>
+                  <IconButton color="primary" onClick={function () { props.openEdit(index); }} >
                     <EditIcon />
                   </IconButton>
-                  <IconButton color="error" onClick={function () { props.deleteTask(index);}}>
+                  <IconButton color="error" onClick={function () { props.deleteTask(index); }} >
                     <DeleteIcon />
                   </IconButton>
-                  <IconButton color="success" disabled={index === 0} onClick={function () { props.moveUp(index); }}>
+                  <IconButton color="success" disabled={index === 0} onClick={function () { props.moveUp(index); }} >
                     <ArrowUpwardIcon />
                   </IconButton>
-                  <IconButton color="secondary" disabled={index === props.tasks.length - 1} onClick={function () { props.moveDown(index); }}>
+                  <IconButton color="secondary" disabled={index === props.tasks.length - 1} onClick={function () { props.moveDown(index); }} >
                     <ArrowDownwardIcon />
                   </IconButton>
                 </TableCell>
